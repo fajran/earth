@@ -16,12 +16,13 @@ int main() {
     return 3;
 
   e::Earth earth;
+  earth.Init();
 
   while (glfwGetWindowParam(GLFW_OPENED)
          && glfwGetKey(GLFW_KEY_ESC) != GLFW_PRESS) {
 
-    earth.update();
-    earth.render();
+    earth.Update();
+    earth.Render();
     glfwSwapBuffers();
   }
 

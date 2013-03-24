@@ -8,10 +8,13 @@ Earth::Earth() {
 Earth::~Earth() {
 }
 
-void Earth::update() {
+void Earth::Init() {
 }
 
-void Earth::render() {
+void Earth::Update() {
+}
+
+void Earth::Render() {
 }
 
 }

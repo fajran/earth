@@ -1,5 +1,5 @@
-#ifndef EARTH_H_
-#define EARTH_H_
+#ifndef EARTH_EARTH_H_
+#define EARTH_EARTH_H_
 
 namespace e {
 
@@ -8,8 +8,9 @@ class Earth {
   Earth();
   virtual ~Earth();
 
-  void update();
-  void render();
+  void Init();
+  void Update();
+  void Render();
 };
 
 }
