@@ -2,6 +2,8 @@
 
 #include <GL/glew.h>
 
+#include "shader.h"
+
 namespace e {
 
 
@@ -15,10 +17,16 @@ static const GLfloat g_vertex_buffer_data[] = {
 
 static GLuint vertexbuffer;
 
+static Shader* shader = NULL;
+
 Earth::Earth() {
 }
 
 Earth::~Earth() {
+  if (shader != NULL) {
+    delete shader;
+    shader = NULL;
+  }
 }
 
 void Earth::Init() {
@@ -32,6 +40,9 @@ void Earth::Init() {
 
   // Give our vertices to OpenGL.
   glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+  shader = new Shader("data/triangle.vs", "data/triangle.fs");
+  shader->Load();
 }
 
 void Earth::Update() {
@@ -39,7 +50,7 @@ void Earth::Update() {
 
 void Earth::Render() {
   glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // 1rst attribute buffer : vertices
   glEnableVertexAttribArray(0);
@@ -52,6 +63,8 @@ void Earth::Render() {
      0,                  // stride
      (void*)0            // array buffer offset
   );
+
+  glUseProgram(shader->program());
 
   // Draw the triangle !
   glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
