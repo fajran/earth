@@ -5,10 +5,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "shader.h"
+#include "camera.h"
 
 namespace e {
-
-
 
 // An array of 3 vectors which represents 3 vertices
 static const GLfloat g_vertex_buffer_data[] = {
@@ -24,6 +23,7 @@ static GLuint mvpId;
 static glm::mat4 mvp;
 
 static Shader* shader = NULL;
+static Camera camera(glm::perspective(45.0f, 4.0f/3.0f, 0.1f, 100.0f));
 
 Earth::Earth() {
 }
@@ -53,14 +53,9 @@ void Earth::Init() {
   mvpId = shader->GetUniformLocation("mvp");
 
   {
-    glm::mat4 projection = glm::perspective(45.0f, 4.0f/3.0f, 0.1f, 100.0f);
-    glm::mat4 view = glm::lookAt(
-      glm::vec3(4, 3, 3),
-      glm::vec3(0, 0, 0),
-      glm::vec3(0, 1, 0)
-    );
+    camera.LookAt(glm::vec3(4, 3, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
     glm::mat4 model = glm::mat4(1.0f);
-    mvp = projection * view * model;
+    mvp = camera.Matrix() * model;
   }
 }
 

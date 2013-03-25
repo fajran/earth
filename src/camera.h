@@ -7,7 +7,7 @@ namespace e {
 
 class Camera {
  public:
-  Camera();
+  Camera(glm::mat4 const projection);
   virtual ~Camera();
 
   glm::mat4 Matrix();
@@ -17,7 +17,13 @@ class Camera {
               glm::vec3 const up);
 
  private:
+  void UpdateMatrix();
+
+  glm::mat4 const projection_;
+  glm::mat4 view_;
   glm::mat4 matrix_;
+
+  bool dirty_;
 };
 
 }
