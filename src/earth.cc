@@ -1,6 +1,7 @@
 #include "earth.h"
 
 #include <GL/glew.h>
+#include <glm/glm.hpp>
 
 #include "shader.h"
 
@@ -17,6 +18,9 @@ static const GLfloat g_vertex_buffer_data[] = {
 
 static GLuint vertexbuffer;
 static GLuint posId;
+static GLuint mvpId;
+
+static glm::mat4 mvp;
 
 static Shader* shader = NULL;
 
@@ -45,6 +49,9 @@ void Earth::Init() {
   shader = new Shader("data/triangle.vs", "data/triangle.fs");
   shader->Load();
   posId = glGetAttribLocation(shader->program(), "pos");
+  mvpId = glGetUniformLocation(shader->program(), "mvp");
+
+  mvp = glm::mat4(1.0f);
 }
 
 void Earth::Update() {
@@ -65,6 +72,7 @@ void Earth::Render() {
      0,                  // stride
      (void*)0            // array buffer offset
   );
+  glUniformMatrix4fv(mvpId, 1, GL_FALSE, &mvp[0][0]);
 
   glUseProgram(shader->program());
 
