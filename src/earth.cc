@@ -48,8 +48,8 @@ void Earth::Init() {
 
   shader = new Shader("data/triangle.vs", "data/triangle.fs");
   shader->Load();
-  posId = glGetAttribLocation(shader->program(), "pos");
-  mvpId = glGetUniformLocation(shader->program(), "mvp");
+  posId = shader->GetAttribLocation("pos");
+  mvpId = shader->GetUniformLocation("mvp");
 
   mvp = glm::mat4(1.0f);
 }

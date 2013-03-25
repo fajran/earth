@@ -92,5 +92,13 @@ void Shader::Unload() {
   }
 }
 
+GLuint Shader::GetUniformLocation(const std::string name) {
+  return glGetUniformLocation(program_, name.c_str());
+}
+
+GLuint Shader::GetAttribLocation(const std::string name) {
+  return glGetAttribLocation(program_, name.c_str());
+}
+
 }
 

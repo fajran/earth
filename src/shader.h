@@ -18,6 +18,9 @@ class Shader {
 
   GLuint program() { return program_; }
 
+  GLuint GetUniformLocation(const std::string name);
+  GLuint GetAttribLocation(const std::string name);
+
  private:
   const std::string vertex_shader_file_;
   const std::string fragment_shader_file_;
