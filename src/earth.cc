@@ -16,6 +16,7 @@ static const GLfloat g_vertex_buffer_data[] = {
 };
 
 static GLuint vertexbuffer;
+static GLuint posId;
 
 static Shader* shader = NULL;
 
@@ -43,6 +44,7 @@ void Earth::Init() {
 
   shader = new Shader("data/triangle.vs", "data/triangle.fs");
   shader->Load();
+  posId = glGetAttribLocation(shader->program(), "pos");
 }
 
 void Earth::Update() {
@@ -56,7 +58,7 @@ void Earth::Render() {
   glEnableVertexAttribArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
   glVertexAttribPointer(
-     0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+     posId,              // attribute 0. No particular reason for 0, but must match the layout in the shader.
      3,                  // size
      GL_FLOAT,           // type
      GL_FALSE,           // normalized?
