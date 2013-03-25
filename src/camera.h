@@ -10,6 +10,9 @@ class Camera {
   Camera(glm::mat4 const projection);
   virtual ~Camera();
 
+  glm::mat4 projection() const { return projection_; }
+  glm::mat4 view() const { return view_; }
+
   glm::mat4 Matrix();
 
   void LookAt(glm::vec3 const eye,
