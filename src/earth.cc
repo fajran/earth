@@ -25,7 +25,9 @@ Earth::~Earth() {
 
 void Earth::Init() {
   triangle = new Triangle();
-  camera.LookAt(glm::vec3(4, 3, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+  camera.SetPosition(glm::vec3(0, 0, 10));
+  camera.SetScale(glm::vec3(2, 2, 2));
+  camera.SetRotation(glm::vec3(0, 0, 0));
 }
 
 void Earth::Update() {

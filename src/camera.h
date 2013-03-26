@@ -15,9 +15,9 @@ class Camera {
 
   glm::mat4 Matrix();
 
-  void LookAt(glm::vec3 const eye,
-              glm::vec3 const center,
-              glm::vec3 const up);
+  void SetPosition(glm::vec3 const position);
+  void SetRotation(glm::vec3 const rotation);
+  void SetScale(glm::vec3 const scale);
 
  private:
   void UpdateMatrix();
@@ -25,6 +25,11 @@ class Camera {
   glm::mat4 const projection_;
   glm::mat4 view_;
   glm::mat4 matrix_;
+  glm::mat4 camera_matrix_;
+
+  glm::vec3 position_;
+  glm::vec3 rotation_;
+  glm::vec3 scale_;
 
   bool dirty_;
 };
