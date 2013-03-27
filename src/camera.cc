@@ -50,13 +50,17 @@ void Camera::SetScale(glm::vec3 const scale) {
 }
 
 void Camera::UpdateMatrix() {
-  glm::mat4 scale = glm::scale(glm::mat4(1.0f), scale_);
-  glm::mat4 translation = glm::translate(glm::mat4(1.0f), position_);
-  camera_matrix_ = translation * rotation_ * scale;
+  glm::mat4 scale_inv(1.0f / scale_.x, 0, 0, 0,
+                      0, 1.0f / scale_.y, 0, 0,
+                      0, 0, 1.0f / scale_.z, 0,
+                      0, 0, 0, 1);
+  glm::mat4 translation_inv(1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            -position_.x, -position_.y, -position_.z, 1);
+  glm::mat4 rotation_inv = glm::transpose(rotation_); // orthogonal matrix
 
-  // TODO optimize the inverse
-  view_ = glm::inverse(camera_matrix_);
-
+  view_ = scale_inv * rotation_inv * translation_inv;
   matrix_ = projection_ * view_;
 }
 

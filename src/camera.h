@@ -26,7 +26,6 @@ class Camera {
   glm::mat4 const projection_;
   glm::mat4 view_;
   glm::mat4 matrix_;
-  glm::mat4 camera_matrix_;
 
   glm::vec3 position_;
   glm::mat4 rotation_;
