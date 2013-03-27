@@ -3,7 +3,7 @@ PKGS := glew libglfw
 SRCDIR := src
 BUILDDIR := build
 CFLAGS := -Wall -std=c++0x `pkg-config --cflags $(PKGS)`
-LIBS := `pkg-config --libs $(PKGS)`
+LIBS := -lm `pkg-config --libs $(PKGS)`
 TARGET := earth
 
 SRCEXT := cc
