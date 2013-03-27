@@ -18,75 +18,85 @@ static const GLfloat color_data[] = {
   0.0f, 0.0f, 1.0f, 1.0f
 };
 
-static GLuint vertexbuffer = 0;
-static GLuint vbColor = 0;
-static GLuint posId;
-static GLuint colorId;
-static GLuint mvpId;
+struct TriangleData {
+  GLuint vbo[2];
+  GLuint posId;
+  GLuint colorId;
+  GLuint mvpId;
 
-static Shader* shader = NULL;
+  Shader* shader = NULL;
+  glm::mat4 model;
 
-static glm::mat4 model(1.0f);
+  bool initialized;
 
-static void Init() {
-  glGenBuffers(1, &vertexbuffer);
-  glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+  TriangleData() : initialized(false) {
+  }
+};
+
+static void Init(TriangleData* data) {
+  glGenBuffers(2, &data->vbo[0]);
+
+  glBindBuffer(GL_ARRAY_BUFFER, data->vbo[0]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
-  glGenBuffers(1, &vbColor);
-  glBindBuffer(GL_ARRAY_BUFFER, vbColor);
+  glBindBuffer(GL_ARRAY_BUFFER, data->vbo[1]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(color_data), color_data, GL_STATIC_DRAW);
 
-  shader = new Shader("data/triangle.vs", "data/triangle.fs");
-  shader->Load();
-  posId = shader->GetAttribLocation("pos");
-  colorId = shader->GetAttribLocation("color");
-  mvpId = shader->GetUniformLocation("mvp");
+  data->shader = new Shader("data/triangle.vs", "data/triangle.fs");
+  data->shader->Load();
+  data->posId = data->shader->GetAttribLocation("pos");
+  data->colorId = data->shader->GetAttribLocation("color");
+  data->mvpId = data->shader->GetUniformLocation("mvp");
+
+  data->initialized = true;
 }
 
 Triangle::Triangle() {
+  data_ = new TriangleData();
+  data_->model = glm::mat4(1.0f);
 }
 
 Triangle::~Triangle() {
-  if (shader != NULL) {
-    delete shader;
-    shader = NULL;
+  if (data_->shader != NULL) {
+    delete data_->shader;
+    data_->shader = NULL;
   }
+  delete data_;
 }
 
 void Triangle::Update() {
-  if (vertexbuffer == 0) {
-    Init();
+  if (!data_->initialized) {
+    Init(data_);
   }
 }
 
 void Triangle::Draw(glm::mat4 vp) {
-  glm::mat4 mvp = vp * model;
+  glm::mat4 mvp = vp * data_->model;
 
   // 1rst attribute buffer : vertices
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
-  glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, data_->vbo[0]);
   glVertexAttribPointer(
-     posId,              // attribute 0. No particular reason for 0, but must match the layout in the shader.
+     data_->posId,       // attribute 0. No particular reason for 0, but must match the layout in the shader.
      3,                  // size
      GL_FLOAT,           // type
      GL_FALSE,           // normalized?
      0,                  // stride
      (void*)0            // array buffer offset
   );
-  glBindBuffer(GL_ARRAY_BUFFER, vbColor);
+  glBindBuffer(GL_ARRAY_BUFFER, data_->vbo[1]);
   glVertexAttribPointer(
-    colorId,
+    data_->colorId,
     4,
     GL_FLOAT,
     GL_FALSE,
     0,
     (void*)0
   );
-  glUniformMatrix4fv(mvpId, 1, GL_FALSE, &mvp[0][0]);
+  glUniformMatrix4fv(data_->mvpId, 1, GL_FALSE, &mvp[0][0]);
 
-  glUseProgram(shader->program());
+  glUseProgram(data_->shader->program());
 
   // Draw the triangle !
   glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle

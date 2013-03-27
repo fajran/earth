@@ -5,6 +5,8 @@
 
 namespace e {
 
+struct TriangleData;
+
 class Triangle {
  public:
   Triangle();
@@ -12,6 +14,9 @@ class Triangle {
 
   void Update();
   void Draw(glm::mat4 vp);
+
+ private:
+  TriangleData* data_;
 };
 
 }
