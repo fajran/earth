@@ -12,8 +12,16 @@ static const GLfloat g_vertex_buffer_data[] = {
    0.0f,  1.0f, 0.0f,
 };
 
+static const GLfloat color_data[] = {
+  1.0f, 0.0f, 0.0f, 1.0f,
+  0.0f, 1.0f, 0.0f, 1.0f,
+  0.0f, 0.0f, 1.0f, 1.0f
+};
+
 static GLuint vertexbuffer = 0;
+static GLuint vbColor = 0;
 static GLuint posId;
+static GLuint colorId;
 static GLuint mvpId;
 
 static Shader* shader = NULL;
@@ -25,9 +33,14 @@ static void Init() {
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
+  glGenBuffers(1, &vbColor);
+  glBindBuffer(GL_ARRAY_BUFFER, vbColor);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(color_data), color_data, GL_STATIC_DRAW);
+
   shader = new Shader("data/triangle.vs", "data/triangle.fs");
   shader->Load();
   posId = shader->GetAttribLocation("pos");
+  colorId = shader->GetAttribLocation("color");
   mvpId = shader->GetUniformLocation("mvp");
 }
 
@@ -52,6 +65,7 @@ void Triangle::Draw(glm::mat4 vp) {
 
   // 1rst attribute buffer : vertices
   glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
   glVertexAttribPointer(
      posId,              // attribute 0. No particular reason for 0, but must match the layout in the shader.
@@ -61,6 +75,15 @@ void Triangle::Draw(glm::mat4 vp) {
      0,                  // stride
      (void*)0            // array buffer offset
   );
+  glBindBuffer(GL_ARRAY_BUFFER, vbColor);
+  glVertexAttribPointer(
+    colorId,
+    4,
+    GL_FLOAT,
+    GL_FALSE,
+    0,
+    (void*)0
+  );
   glUniformMatrix4fv(mvpId, 1, GL_FALSE, &mvp[0][0]);
 
   glUseProgram(shader->program());
@@ -68,6 +91,7 @@ void Triangle::Draw(glm::mat4 vp) {
   // Draw the triangle !
   glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
 
+  glDisableVertexAttribArray(1);
   glDisableVertexAttribArray(0);
 }
 
