@@ -16,7 +16,8 @@ class Camera {
   glm::mat4 Matrix();
 
   void SetPosition(glm::vec3 const position);
-  void SetRotation(glm::vec3 const rotation);
+  void SetRotation(glm::mat4 const rotation);
+  void SetRotation(glm::vec3 const angles);
   void SetScale(glm::vec3 const scale);
 
  private:
@@ -28,7 +29,7 @@ class Camera {
   glm::mat4 camera_matrix_;
 
   glm::vec3 position_;
-  glm::vec3 rotation_;
+  glm::mat4 rotation_;
   glm::vec3 scale_;
 
   bool dirty_;
