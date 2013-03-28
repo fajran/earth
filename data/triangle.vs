@@ -1,5 +1,3 @@
-#version 330 core
-
 attribute vec3 pos;
 attribute vec4 color;
 uniform mat4 mvp;
