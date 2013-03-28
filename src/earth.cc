@@ -44,6 +44,9 @@ void Earth::Render() {
   glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
+
   triangle->Draw(camera.Matrix());
   cube->Draw(camera.Matrix());
 }
