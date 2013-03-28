@@ -76,6 +76,8 @@ void Triangle::Draw(glm::mat4 vp) {
   // 1rst attribute buffer : vertices
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
+  glUseProgram(data_->shader->program());
+
   glBindBuffer(GL_ARRAY_BUFFER, data_->vbo[0]);
   glVertexAttribPointer(
      data_->posId,       // attribute 0. No particular reason for 0, but must match the layout in the shader.
@@ -95,8 +97,6 @@ void Triangle::Draw(glm::mat4 vp) {
     (void*)0
   );
   glUniformMatrix4fv(data_->mvpId, 1, GL_FALSE, &mvp[0][0]);
-
-  glUseProgram(data_->shader->program());
 
   // Draw the triangle !
   glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
