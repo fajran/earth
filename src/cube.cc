@@ -21,6 +21,19 @@ static GLfloat vertices[] = {
   -0.5f,  0.5f, -0.5f,
 };
 
+static GLfloat colors[] = {
+  // bottom
+  1, 0, 0, 1,
+  0, 1, 0, 1,
+  0, 0, 1, 1,
+  1, 0, 1, 1,
+  // top
+  0, 1, 1, 1,
+  1, 1, 0, 1,
+  1, 1, 1, 1,
+  0, 0, 0, 1
+};
+
 static GLuint indices[] = {
   0, 2, 1, 1, 0, 3, // bottom
   1, 6, 5, 6, 1, 2, // right
@@ -31,7 +44,7 @@ static GLuint indices[] = {
 };
 
 enum BUFFERS {
-  B_VERTICES, B_INDICES,
+  B_VERTICES, B_COLORS, B_INDICES,
   B_COUNT
 };
 
@@ -40,6 +53,7 @@ struct CubeData {
   Shader* shader;
 
   GLuint posId;
+  GLuint colorId;
   GLuint mvpId;
 
   glm::mat4 model;
@@ -58,6 +72,9 @@ static void Init(CubeData* data) {
   glBindBuffer(GL_ARRAY_BUFFER, data->buffers[B_VERTICES]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+  glBindBuffer(GL_ARRAY_BUFFER, data->buffers[B_COLORS]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, data->buffers[B_INDICES]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
                GL_STATIC_DRAW);
@@ -66,6 +83,7 @@ static void Init(CubeData* data) {
   data->shader->Load();
 
   data->posId = data->shader->GetAttribLocation("pos");
+  data->colorId = data->shader->GetAttribLocation("color");
   data->mvpId = data->shader->GetUniformLocation("mvp");
 
   data->initialized = true;
@@ -96,17 +114,22 @@ void Cube::Draw(glm::mat4 vp) {
   glm::mat4 mvp = vp * data_->model;
 
   glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
 
   glUseProgram(data_->shader->program());
 
   glBindBuffer(GL_ARRAY_BUFFER, data_->buffers[B_VERTICES]);
   glVertexAttribPointer(data_->posId, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
+  glBindBuffer(GL_ARRAY_BUFFER, data_->buffers[B_COLORS]);
+  glVertexAttribPointer(data_->colorId, 4, GL_FLOAT, GL_FALSE, 0, NULL);
+
   glUniformMatrix4fv(data_->mvpId, 1, GL_FALSE, &mvp[0][0]);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, data_->buffers[B_INDICES]);
   glDrawElements(GL_TRIANGLES, 3 * 2 * 6, GL_UNSIGNED_INT, 0);
 
+  glDisableVertexAttribArray(1);
   glDisableVertexAttribArray(0);
 }
 
