@@ -1,5 +1,5 @@
 CXX ?= clang++
-PKGS := glew libglfw
+PKGS := glew libglfw libpng
 SRCDIR := src
 BUILDDIR := build
 CFLAGS := -Wall -std=c++0x $(shell pkg-config --cflags $(PKGS))
