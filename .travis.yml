@@ -1,0 +1,7 @@
+language: cpp
+compiler: clang
+before_install:
+- sudo apt-get install pkg-config clang
+- sudo apt-get install libglm-dev libglew1.6-dev libglfw-dev
+install: make
+script: make
