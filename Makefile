@@ -1,9 +1,9 @@
-CC := clang++
+CXX ?= clang++
 PKGS := glew libglfw
 SRCDIR := src
 BUILDDIR := build
-CFLAGS := -Wall -std=c++0x `pkg-config --cflags $(PKGS)`
-LIBS := -lm `pkg-config --libs $(PKGS)`
+CFLAGS := -Wall -std=c++0x $(shell pkg-config --cflags $(PKGS))
+LIBS := -lm $(shell pkg-config --libs $(PKGS))
 TARGET := earth
 
 SRCEXT := cc
@@ -11,19 +11,21 @@ SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 DEPS := $(OBJECTS:.o=.deps)
 
+all : $(TARGET)
+
 $(TARGET) : $(OBJECTS)
 	@echo "Linking..."
-	@$(CC) $^ -o $(TARGET) $(LIBS)
+	@$(CXX) $^ -o $(TARGET) $(LIBS)
 
 $(BUILDDIR)/%.o : $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)
 	@echo "CC $<"
-	@$(CC) $(CFLAGS) -MD -MF $(@:.o=.deps) -c -o $@ $<
+	@$(CXX) $(CFLAGS) -MD -MF $(@:.o=.deps) -c -o $@ $<
 
 clean:
 	@echo "Cleaning..."
 	@$(RM) -r $(BUILDDIR) $(TARGET)
 
 -include $(DEPS)
-.PHONY: clean
+.PHONY: all clean
 
