@@ -24,12 +24,12 @@ struct TriangleData {
   GLuint colorId;
   GLuint mvpId;
 
-  Shader* shader = NULL;
+  Shader* shader;
   glm::mat4 model;
 
   bool initialized;
 
-  TriangleData() : initialized(false) {
+  TriangleData() : shader(NULL), initialized(false) {
   }
 };
 
