@@ -21,36 +21,10 @@
 #include <GL/glew.h>
 
 #include "shader.h"
+#include "image.h"
+#include "image-loader.h"
 
 namespace e {
-
-static int texture_width = 8;
-static int texture_height = 8;
-static unsigned char texture_data[] = {
-  0, 0, 0, 255,  0, 0, 0, 255,  0, 0, 0, 255,  0, 0, 0, 255,
-  0, 0, 0, 255,  0, 0, 0, 255,  0, 0, 0, 255,  0, 0, 0, 255,
-
-  255, 0, 0, 255,  255, 0, 0, 255,  255, 0, 0, 255,  255, 0, 0, 255,
-  255, 0, 0, 255,  255, 0, 0, 255,  255, 0, 0, 255,  255, 0, 0, 255,
-
-  0, 255, 0, 255,  0, 255, 0, 255,  0, 255, 0, 255,  0, 255, 0, 255,
-  0, 255, 0, 255,  0, 255, 0, 255,  0, 255, 0, 255,  0, 255, 0, 255,
-
-  0, 0, 255, 255,  0, 0, 255, 255,  0, 0, 255, 255,  0, 0, 255, 255,
-  0, 0, 255, 255,  0, 0, 255, 255,  0, 0, 255, 255,  0, 0, 255, 255,
-
-  255, 255, 0, 255,  255, 255, 0, 255,  255, 255, 0, 255,  255, 255, 0, 255,
-  255, 255, 0, 255,  255, 255, 0, 255,  255, 255, 0, 255,  255, 255, 0, 255,
-
-  255, 0, 255, 255,  255, 0, 255, 255,  255, 0, 255, 255,  255, 0, 255, 255,
-  255, 0, 255, 255,  255, 0, 255, 255,  255, 0, 255, 255,  255, 0, 255, 255,
-
-  0, 255, 255, 255,  0, 255, 255, 255,  0, 255, 255, 255,  0, 255, 255, 255,
-  0, 255, 255, 255,  0, 255, 255, 255,  0, 255, 255, 255,  0, 255, 255, 255,
-
-  255, 255, 255, 255,  255, 255, 255, 255,  255, 255, 255, 255,  255, 255, 255, 255,
-  255, 255, 255, 255,  255, 255, 255, 255,  255, 255, 255, 255,  255, 255, 255, 255
-};
 
 enum BUFFERS {
   B_VERTICES, B_INDICES,
@@ -152,8 +126,12 @@ static void Init(TileData* data) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture_width, texture_height, 0,
-               GL_RGBA, GL_UNSIGNED_BYTE, texture_data);
+
+  Image* image = ImageLoader::LoadPNG("data/pepper.png");
+  assert(image != NULL);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width(), image->height(), 0,
+               GL_RGBA, GL_UNSIGNED_BYTE, image->data());
+  delete image;
 
   data->shader = new Shader("data/tile.vs", "data/tile.fs");
   data->shader->Load();
