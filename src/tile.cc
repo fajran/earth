@@ -24,6 +24,34 @@
 
 namespace e {
 
+static int texture_width = 8;
+static int texture_height = 8;
+static unsigned char texture_data[] = {
+  0, 0, 0, 255,  0, 0, 0, 255,  0, 0, 0, 255,  0, 0, 0, 255,
+  0, 0, 0, 255,  0, 0, 0, 255,  0, 0, 0, 255,  0, 0, 0, 255,
+
+  255, 0, 0, 255,  255, 0, 0, 255,  255, 0, 0, 255,  255, 0, 0, 255,
+  255, 0, 0, 255,  255, 0, 0, 255,  255, 0, 0, 255,  255, 0, 0, 255,
+
+  0, 255, 0, 255,  0, 255, 0, 255,  0, 255, 0, 255,  0, 255, 0, 255,
+  0, 255, 0, 255,  0, 255, 0, 255,  0, 255, 0, 255,  0, 255, 0, 255,
+
+  0, 0, 255, 255,  0, 0, 255, 255,  0, 0, 255, 255,  0, 0, 255, 255,
+  0, 0, 255, 255,  0, 0, 255, 255,  0, 0, 255, 255,  0, 0, 255, 255,
+
+  255, 255, 0, 255,  255, 255, 0, 255,  255, 255, 0, 255,  255, 255, 0, 255,
+  255, 255, 0, 255,  255, 255, 0, 255,  255, 255, 0, 255,  255, 255, 0, 255,
+
+  255, 0, 255, 255,  255, 0, 255, 255,  255, 0, 255, 255,  255, 0, 255, 255,
+  255, 0, 255, 255,  255, 0, 255, 255,  255, 0, 255, 255,  255, 0, 255, 255,
+
+  0, 255, 255, 255,  0, 255, 255, 255,  0, 255, 255, 255,  0, 255, 255, 255,
+  0, 255, 255, 255,  0, 255, 255, 255,  0, 255, 255, 255,  0, 255, 255, 255,
+
+  255, 255, 255, 255,  255, 255, 255, 255,  255, 255, 255, 255,  255, 255, 255, 255,
+  255, 255, 255, 255,  255, 255, 255, 255,  255, 255, 255, 255,  255, 255, 255, 255
+};
+
 enum BUFFERS {
   B_VERTICES, B_INDICES,
   B_COUNT
@@ -35,6 +63,9 @@ struct TileData {
   GLuint buffers[B_COUNT];
   GLuint posId;
   GLuint mvpId;
+  GLuint texId;
+
+  GLuint textureId;
 
   GLuint elements;
 
@@ -115,10 +146,20 @@ static void Init(TileData* data) {
 
   data->elements = size;
 
+  glGenTextures(1, &data->textureId);
+  glBindTexture(GL_TEXTURE_2D, data->textureId);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture_width, texture_height, 0,
+               GL_RGBA, GL_UNSIGNED_BYTE, texture_data);
+
   data->shader = new Shader("data/tile.vs", "data/tile.fs");
   data->shader->Load();
   data->posId = data->shader->GetAttribLocation("pos");
   data->mvpId = data->shader->GetUniformLocation("mvp");
+  data->texId = data->shader->GetUniformLocation("tex");
 
   data->initialized = true;
 }
@@ -153,6 +194,10 @@ void Tile::Draw(glm::mat4 vp) {
   glEnableVertexAttribArray(0);
 
   glUseProgram(data_->shader->program());
+
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, data_->textureId);
+  glUniform1i(data_->texId, 0);
 
   glBindBuffer(GL_ARRAY_BUFFER, data_->buffers[B_VERTICES]);
   glVertexAttribPointer(data_->posId, 3, GL_FLOAT, GL_FALSE, 0, NULL);
