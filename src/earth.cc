@@ -24,6 +24,7 @@
 #include "camera.h"
 #include "triangle.h"
 #include "cube.h"
+#include "tile.h"
 
 namespace e {
 
@@ -31,6 +32,7 @@ static Camera camera(glm::perspective(45.0f, 4.0f/3.0f, 0.1f, 100.0f));
 
 static Triangle* triangle = NULL;
 static Cube* cube = NULL;
+static Tile* tile = NULL;
 
 Earth::Earth() {
 }
@@ -45,6 +47,7 @@ Earth::~Earth() {
 void Earth::Init() {
   triangle = new Triangle();
   cube = new Cube();
+  tile = new Tile(8);
 
   camera.SetPosition(glm::vec3(0, 0, 10));
   camera.SetScale(glm::vec3(2, 2, 2));
@@ -54,6 +57,7 @@ void Earth::Init() {
 void Earth::Update() {
   triangle->Update();
   cube->Update();
+  tile->Update();
 }
 
 void Earth::Render() {
@@ -65,6 +69,7 @@ void Earth::Render() {
 
   triangle->Draw(camera.Matrix());
   cube->Draw(camera.Matrix());
+  tile->Draw(camera.Matrix());
 }
 
 }
