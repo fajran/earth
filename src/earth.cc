@@ -30,33 +30,25 @@ namespace e {
 
 static Camera camera(glm::perspective(45.0f, 4.0f/3.0f, 0.1f, 100.0f));
 
-static Triangle* triangle = NULL;
-static Cube* cube = NULL;
 static Tile* tile = NULL;
 
 Earth::Earth() {
 }
 
 Earth::~Earth() {
-  if (triangle != NULL) {
-    delete triangle;
-  }
-  if (cube != NULL) delete cube;
+  delete tile;
+  tile = NULL;
 }
 
 void Earth::Init() {
-  triangle = new Triangle();
-  cube = new Cube();
   tile = new Tile(8);
 
-  camera.SetPosition(glm::vec3(0, 0, 10));
+  camera.SetPosition(glm::vec3(0, 0, 2));
   camera.SetScale(glm::vec3(2, 2, 2));
   camera.SetRotation(glm::vec3(0, 0, 0));
 }
 
 void Earth::Update() {
-  triangle->Update();
-  cube->Update();
   tile->Update();
 }
 
@@ -67,8 +59,6 @@ void Earth::Render() {
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
-  triangle->Draw(camera.Matrix());
-  cube->Draw(camera.Matrix());
   tile->Draw(camera.Matrix());
 }
 
