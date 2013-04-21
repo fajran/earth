@@ -27,7 +27,7 @@ namespace e {
 
 // Source: http://en.wikibooks.org/wiki/OpenGL_Programming/Intermediate/Textures#A_simple_libpng_example
 // Licensed under Creative Commons Attribution/Share-Alike License
-Image* ImageLoader::LoadPNG(const char* fname) {
+Image* ImageLoader::LoadPNG(const char* fname, const bool flip) {
   FILE* f = fopen(fname, "rb");
   if (!f) {
     return NULL;
@@ -98,8 +98,15 @@ Image* ImageLoader::LoadPNG(const char* fname) {
     return NULL;
   }
 
-  for (int i=0; i<height; i++) {
-    row_pointers[height - 1 - i] = image_data + i * rowbytes;
+  if (flip) {
+    for (int i=0; i<height; i++) {
+      row_pointers[height - 1 - i] = image_data + i * rowbytes;
+    }
+  }
+  else {
+    for (int i=0; i<height; i++) {
+      row_pointers[i] = image_data + i * rowbytes;
+    }
   }
 
   png_read_image(png_ptr, row_pointers);

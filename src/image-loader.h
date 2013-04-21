@@ -23,7 +23,7 @@ class Image;
 
 class ImageLoader {
  public:
-  static Image* LoadPNG(const char* fname);
+  static Image* LoadPNG(const char* fname, const bool flip = false);
 };
 
 }
