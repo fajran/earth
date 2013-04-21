@@ -73,11 +73,13 @@ struct CubeData {
   GLuint mvpId;
 
   glm::mat4 model;
+  glm::mat4 matrix;
 
   bool initialized;
 
   CubeData()
       : model(glm::mat4(1.0f)),
+        matrix(glm::mat4(1.0f)),
         initialized(false) {
   }
 };
@@ -121,14 +123,20 @@ Cube::~Cube() {
   delete data_;
 }
 
+void Cube::Apply(glm::mat4 matrix) {
+  data_->matrix = matrix * data_->model;
+}
+
 void Cube::Update() {
   if (!data_->initialized) Init(data_);
   data_->model = glm::rotate(data_->model, 1.0f, glm::vec3(0.1, 0.2, 0.3));
 }
 
-void Cube::Draw(glm::mat4 vp) {
-  glm::mat4 mvp = vp * data_->model;
+glm::mat4 Cube::Matrix() {
+  return data_->matrix;
+}
 
+void Cube::Draw() {
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
 
@@ -140,7 +148,7 @@ void Cube::Draw(glm::mat4 vp) {
   glBindBuffer(GL_ARRAY_BUFFER, data_->buffers[B_COLORS]);
   glVertexAttribPointer(data_->colorId, 4, GL_FLOAT, GL_FALSE, 0, NULL);
 
-  glUniformMatrix4fv(data_->mvpId, 1, GL_FALSE, &mvp[0][0]);
+  glUniformMatrix4fv(data_->mvpId, 1, GL_FALSE, &data_->matrix[0][0]);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, data_->buffers[B_INDICES]);
   glDrawElements(GL_TRIANGLES, 3 * 2 * 6, GL_UNSIGNED_INT, 0);

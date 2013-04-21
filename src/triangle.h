@@ -19,17 +19,21 @@
 
 #include <glm/glm.hpp>
 
+#include "node.h"
+
 namespace e {
 
 struct TriangleData;
 
-class Triangle {
+class Triangle : public Node {
  public:
   Triangle();
   virtual ~Triangle();
 
-  void Update();
-  void Draw(glm::mat4 vp);
+  virtual void Apply(glm::mat4 matrix);
+  virtual void Update();
+  virtual glm::mat4 Matrix();
+  virtual void Draw();
 
  private:
   TriangleData* data_;

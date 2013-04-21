@@ -32,12 +32,21 @@ Camera::Camera(glm::mat4 const projection)
 Camera::~Camera() {
 }
 
+void Camera::Apply(glm::mat4 matrix) {
+}
+
+void Camera::Update() {
+}
+
 glm::mat4 Camera::Matrix() {
   if (dirty_) {
     UpdateMatrix();
     dirty_ = false;
   }
   return matrix_;
+}
+
+void Camera::Draw() {
 }
 
 void Camera::SetPosition(glm::vec3 const position) {

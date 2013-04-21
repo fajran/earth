@@ -45,12 +45,14 @@ struct TileData {
 
   Shader* shader;
   glm::mat4 model;
+  glm::mat4 matrix;
 
   bool initialized;
 
   TileData()
       : shader(NULL),
         model(glm::mat4(1.0f)),
+        matrix(glm::mat4(1.0f)),
         initialized(false) {
   }
 };
@@ -162,13 +164,19 @@ Tile::~Tile() {
   delete data_;
 }
 
+void Tile::Apply(glm::mat4 matrix) {
+  data_->matrix = matrix * data_->model;
+}
+
 void Tile::Update() {
   if (!data_->initialized) Init(data_);
 }
 
-void Tile::Draw(glm::mat4 vp) {
-  glm::mat4 mvp = vp * data_->model;
+glm::mat4 Tile::Matrix() {
+  return data_->matrix;
+}
 
+void Tile::Draw() {
   glEnableVertexAttribArray(0);
 
   glUseProgram(data_->shader->program());
@@ -180,7 +188,7 @@ void Tile::Draw(glm::mat4 vp) {
   glBindBuffer(GL_ARRAY_BUFFER, data_->buffers[B_VERTICES]);
   glVertexAttribPointer(data_->posId, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-  glUniformMatrix4fv(data_->mvpId, 1, GL_FALSE, &mvp[0][0]);
+  glUniformMatrix4fv(data_->mvpId, 1, GL_FALSE, &data_->matrix[0][0]);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, data_->buffers[B_INDICES]);
   glDrawElements(GL_TRIANGLE_STRIP, data_->elements, GL_UNSIGNED_INT, 0);

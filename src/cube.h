@@ -19,17 +19,21 @@
 
 #include <glm/glm.hpp>
 
+#include "node.h"
+
 namespace e {
 
 struct CubeData;
 
-class Cube {
+class Cube : public Node {
  public:
   Cube();
   virtual ~Cube();
 
-  void Update();
-  void Draw(glm::mat4 vp);
+  virtual void Apply(glm::mat4 matrix);
+  virtual void Update();
+  virtual glm::mat4 Matrix();
+  virtual void Draw();
 
  private:
   CubeData* data_;

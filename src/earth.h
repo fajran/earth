@@ -19,6 +19,8 @@
 
 namespace e {
 
+struct EarthData;
+
 class Earth {
  public:
   Earth();
@@ -27,6 +29,9 @@ class Earth {
   void Init();
   void Update();
   void Render();
+
+ private:
+  EarthData* data_;
 };
 
 }

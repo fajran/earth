@@ -19,9 +19,11 @@
 
 #include <glm/glm.hpp>
 
+#include "node.h"
+
 namespace e {
 
-class Camera {
+class Camera : public Node {
  public:
   Camera(glm::mat4 const projection);
   virtual ~Camera();
@@ -29,7 +31,10 @@ class Camera {
   glm::mat4 projection() const { return projection_; }
   glm::mat4 view() const { return view_; }
 
-  glm::mat4 Matrix();
+  virtual void Apply(glm::mat4 matrix);
+  virtual void Update();
+  virtual glm::mat4 Matrix();
+  virtual void Draw();
 
   void SetPosition(glm::vec3 const position);
   void SetRotation(glm::mat4 const rotation);

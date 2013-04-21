@@ -42,6 +42,7 @@ struct TriangleData {
 
   Shader* shader;
   glm::mat4 model;
+  glm::mat4 matrix;
 
   bool initialized;
 
@@ -80,15 +81,21 @@ Triangle::~Triangle() {
   delete data_;
 }
 
+void Triangle::Apply(glm::mat4 matrix) {
+  data_->matrix = matrix * data_->model;
+}
+
 void Triangle::Update() {
   if (!data_->initialized) {
     Init(data_);
   }
 }
 
-void Triangle::Draw(glm::mat4 vp) {
-  glm::mat4 mvp = vp * data_->model;
+glm::mat4 Triangle::Matrix() {
+  return data_->matrix;
+}
 
+void Triangle::Draw() {
   // 1rst attribute buffer : vertices
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
@@ -112,7 +119,7 @@ void Triangle::Draw(glm::mat4 vp) {
     0,
     (void*)0
   );
-  glUniformMatrix4fv(data_->mvpId, 1, GL_FALSE, &mvp[0][0]);
+  glUniformMatrix4fv(data_->mvpId, 1, GL_FALSE, &data_->matrix[0][0]);
 
   // Draw the triangle !
   glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle

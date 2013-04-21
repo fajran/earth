@@ -20,36 +20,63 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "shader.h"
 #include "camera.h"
-#include "triangle.h"
-#include "cube.h"
 #include "tile.h"
+
+#include "node.h"
+#include "node-visitor.h"
 
 namespace e {
 
-static Camera camera(glm::perspective(45.0f, 4.0f/3.0f, 0.1f, 100.0f));
+struct EarthData {
+  Node* root;
+  NodeVisitor* visitor;
 
-static Tile* tile = NULL;
+  bool initialized;
+
+  EarthData() : initialized(false) {
+    root = NULL;
+  }
+
+  void Init() {
+    visitor = new NodeVisitor();
+
+    initialized = true;
+  }
+
+  void DeInit() {
+    delete visitor;
+  }
+};
 
 Earth::Earth() {
+  data_ = new EarthData();
 }
 
 Earth::~Earth() {
-  delete tile;
-  tile = NULL;
+  data_->DeInit();
+  // FIXME cleanup camera and tile
 }
 
 void Earth::Init() {
-  tile = new Tile(8);
+  Camera* camera = new Camera(glm::perspective(45.0f, 4.0f/3.0f, 0.1f, 100.0f));
+  camera->SetPosition(glm::vec3(0, 0, 4));
+  camera->SetScale(glm::vec3(2, 2, 2));
+  camera->SetRotation(glm::vec3(0, 0, 0));
+  data_->root = camera;
 
-  camera.SetPosition(glm::vec3(0, 0, 2));
-  camera.SetScale(glm::vec3(2, 2, 2));
-  camera.SetRotation(glm::vec3(0, 0, 0));
+  Tile* tile = new Tile(8);
+  camera->AddChild(tile);
 }
 
 void Earth::Update() {
-  tile->Update();
+  if (!data_->initialized) {
+    data_->Init();
+  }
+
+  if (data_->root != NULL) {
+    data_->visitor->Update(data_->root);
+  }
 }
 
 void Earth::Render() {
@@ -62,7 +89,9 @@ void Earth::Render() {
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  tile->Draw(camera.Matrix());
+  if (data_->root != NULL) {
+    data_->visitor->Draw(data_->root);
+  }
 }
 
 }
