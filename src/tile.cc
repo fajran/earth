@@ -66,8 +66,8 @@ static GLfloat* CreateVertices(const int segments, GLuint* size) {
   int index = 0;
   for (int y=0; y<=segments; y++) {
     for (int x=0; x<=segments; x++) {
-      vertices[index++] = x / div - 0.5f;
-      vertices[index++] = y / div - 0.5f;
+      vertices[index++] = x / div;
+      vertices[index++] = y / div;
       vertices[index++] = 0.0f;
     }
   }
