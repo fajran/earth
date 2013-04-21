@@ -99,12 +99,12 @@ Image* ImageLoader::LoadPNG(const char* fname, const bool flip) {
   }
 
   if (flip) {
-    for (int i=0; i<height; i++) {
+    for (unsigned int i=0; i<height; i++) {
       row_pointers[height - 1 - i] = image_data + i * rowbytes;
     }
   }
   else {
-    for (int i=0; i<height; i++) {
+    for (unsigned int i=0; i<height; i++) {
       row_pointers[i] = image_data + i * rowbytes;
     }
   }
